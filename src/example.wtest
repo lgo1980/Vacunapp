@@ -1,0 +1,154 @@
+import example.*
+
+describe "Test para el ejercicio 1" {
+
+	test "Una persona que es vacunada con la paifer va atener 10 veces mas anticuerpos" {
+		const persona = new Persona(edad = 40, nombre = "carlos")
+		paifer.efectoVacuna(persona)
+		assert.equals(10, persona.anticuerpos())
+		const fechaMenorA40 = calendario.adelantarHoyPorMes(9)
+		assert.equals(fechaMenorA40, paifer.sumarInmunidad(persona))
+		persona.edad(41)
+		const fechaMayorA40 = calendario.adelantarHoyPorMes(6)
+		assert.equals(fechaMayorA40, paifer.sumarInmunidad(persona))
+	}
+
+	test "Una persona que es vacunada con la larussa va a tener mas anticuerpos dependiendo del efecto multiplicador" {
+		const persona = new Persona(edad = 40, nombre = "carlos")
+		const laRussa = new Larussa(efectoMultiplicador = 4)
+		laRussa.efectoVacuna(persona)
+		assert.equals(4, persona.anticuerpos())
+		assert.equals(new Date(day = 03, month = 03, year = 2022), laRussa.sumarInmunidad(persona))
+	}
+
+	test "Una persona que es vacunada con la astraLaVistaZeneca va a tener 10000 anticuerpos mas" {
+		const persona = new Persona(edad = 40, nombre = "carlos")
+		astraLaVistaZeneca.efectoVacuna(persona)
+		assert.equals(10001, persona.anticuerpos())
+		const fechaMenorA40 = calendario.adelantarHoyPorMes(6)
+		assert.equals(fechaMenorA40, astraLaVistaZeneca.sumarInmunidad(persona))
+		const persona1 = new Persona(edad = 40, nombre = "carlos1")
+		const fechaMayorA40 = calendario.adelantarHoyPorMes(7)
+		assert.equals(fechaMayorA40, astraLaVistaZeneca.sumarInmunidad(persona1))
+	}
+
+	test "Una persona que es vacunada con la combineta los anticuerpos de mas que genere la dosis de mayor cantidad" {
+		const persona = new Persona(edad = 40, nombre = "carlos")
+		const combineta = new Combineta()
+		const laRussa = new Larussa(efectoMultiplicador = 4)
+		combineta.agregarDosis([ astraLaVistaZeneca, laRussa ])
+		combineta.efectoVacuna(persona)
+		assert.equals(4, persona.anticuerpos())
+		const fechaMenorA40 = calendario.adelantarHoyPorMes(6)
+		assert.equals(fechaMenorA40, combineta.sumarInmunidad(persona))
+	}
+
+}
+
+describe "Test para el ejercicio 2" {
+
+	test "Una persona de 35 años que se vacuna con la paifer debe costar un determinado valor" {
+		const persona = new Persona(edad = 35, nombre = "carlos")
+		assert.equals(1350, paifer.costoVacuna(persona))
+	}
+
+	test "Una persona de 17 años que se vacuna con la paifer debe costar un determinado valor" {
+		const persona = new Persona(edad = 17, nombre = "carlos")
+		assert.equals(1400, paifer.costoVacuna(persona))
+	}
+
+	test "Una persona de 35 años que se vacuna con la Larussa debe costar un determinado valor" {
+		const persona = new Persona(edad = 35, nombre = "carlos")
+		const laRussa = new Larussa(efectoMultiplicador = 4)
+		assert.equals(1650, laRussa.costoVacuna(persona))
+	}
+
+	test "Una persona de 35 años que se vacuna con la astraLaVistaZeneca debe costar un determinado valor" {
+		const persona = new Persona(edad = 35, nombre = "carlos")
+		assert.equals(3250, astraLaVistaZeneca.costoVacuna(persona))
+	}
+
+	test "Una persona de 35 años que se vacuna con la combineta debe costar un determinado valor" {
+		const persona = new Persona(edad = 35, nombre = "carlos")
+		const combineta = new Combineta()
+		const laRussa = new Larussa(efectoMultiplicador = 4)
+		combineta.agregarDosis([ astraLaVistaZeneca, laRussa ])
+		assert.equals(5000, combineta.costoVacuna(persona))
+	}
+
+}
+
+describe "Test para el ejercicio 3" {
+
+	test "Una persona cualquierosas le ofrecen la paifer y la acepta" {
+		const persona = new Persona(edad = 35, nombre = "carlos")
+		assert.that(persona.eleccionVacuna(paifer))
+	}
+
+	test "Una persona anticuerposas le ofrecen la paifer y la acepta" {
+		const persona = new Persona(edad = 35, nombre = "carlos", anticuerpos = 10002, criterioEleccionVacuna = anticuerposas)
+		assert.that(persona.eleccionVacuna(paifer))
+	}
+
+	test "Una persona anticuerposas le ofrecen la laRussa y no la acepta" {
+		const persona = new Persona(edad = 35, nombre = "carlos", anticuerpos = 10002, criterioEleccionVacuna = anticuerposas)
+		const laRussa = new Larussa(efectoMultiplicador = 4)
+		assert.notThat(persona.eleccionVacuna(laRussa))
+	}
+
+	test "Una persona inmunidosasFijas le ofrecen la laRussa y la acepta" {
+		const persona = new Persona(edad = 35, nombre = "carlos", anticuerpos = 10002, criterioEleccionVacuna = inmunidosasFijas)
+		const laRussa = new Larussa(efectoMultiplicador = 4, fechaInmunidad = new Date(day = 03, month = 03, year = 2023))
+		assert.that(persona.eleccionVacuna(laRussa))
+	}
+
+	test "Una persona inmunidosasFijas le ofrecen la laRussa con fecha mayor y no la acepta" {
+		const persona = new Persona(edad = 35, nombre = "carlos", anticuerpos = 10002, criterioEleccionVacuna = inmunidosasFijas)
+		const laRussa = new Larussa(efectoMultiplicador = 4)
+		assert.notThat(persona.eleccionVacuna(laRussa))
+	}
+
+}
+
+describe "Test para el ejercicio 4" {
+
+	const persona = new Persona(edad = 35, nombre = "carlos")
+	const personaAnticuerposa = new Persona(edad = 35, nombre = "carlos", anticuerpos = 10, criterioEleccionVacuna = anticuerposas)
+	const laRussaCon5 = new Larussa(efectoMultiplicador = 5)
+	const combineta = new Combineta()
+	const laRussaCon2 = new Larussa(efectoMultiplicador = 2)
+	const laRussaCon2a = new Larussa(efectoMultiplicador = 2)
+	const planVacunacion = new PlanVacunacion()
+
+	method initialize() {
+		combineta.agregarDosis([ paifer, laRussaCon2a ])
+		planVacunacion.agregarVacunas([ paifer, laRussaCon5, laRussaCon2, astraLaVistaZeneca, combineta ])
+	}
+
+	test "El costo inicial de vacunacion de una persona" {
+		assert.equals(1350, planVacunacion.costoInicialVacunacion(persona))
+	}
+
+	test "Una persona no acepta la vacuna y la pone en su registro" {
+		assert.equals(0, planVacunacion.costoInicialVacunacion(personaAnticuerposa))
+	}
+
+}
+
+describe "Test para el ejercicio 5" {
+
+	const persona = new Persona(edad = 35, nombre = "carlos", anticuerpos = 10002, criterioEleccionVacuna = inmunidosasFijas)
+	const laRussa = new Larussa(efectoMultiplicador = 4)
+	const laRussa2 = new Larussa(efectoMultiplicador = 4, fechaInmunidad = new Date(day = 03, month = 03, year = 2023))
+
+	test "Una persona no acepta la vacuna y devuelve mensaje de error" {
+		assert.throwsExceptionWithMessage("La vacuna solicitada no es aplicable para la persona", { persona.vacunarse(laRussa)})
+	}
+
+	test "Una persona acepta la vacuna y la pone en su registro" {
+		persona.vacunarse(laRussa2)
+		assert.equals([ laRussa2 ], persona.historialDeVacunas())
+	}
+
+}
+
