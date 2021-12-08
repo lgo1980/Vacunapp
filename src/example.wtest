@@ -72,8 +72,8 @@ describe "Test para el ejercicio 2" {
 		const persona = new Persona(edad = 35, nombre = "carlos")
 		const combineta = new Combineta()
 		const laRussa = new Larussa(efectoMultiplicador = 4)
-		combineta.agregarDosis([ astraLaVistaZeneca, laRussa ])
-		assert.equals(5000, combineta.costoVacuna(persona))
+		combineta.agregarDosis([ astraLaVistaZeneca, laRussa, paifer ])
+		assert.equals(6550, combineta.costoVacuna(persona))
 	}
 
 }
@@ -126,11 +126,13 @@ describe "Test para el ejercicio 4" {
 	}
 
 	test "El costo inicial de vacunacion de una persona" {
-		assert.equals(1350, planVacunacion.costoInicialVacunacion(persona))
+		planVacunacion.agregarPersonas([ persona ])
+		assert.equals(1350, planVacunacion.costoInicialVacunacion())
 	}
 
-	test "Una persona no acepta la vacuna y la pone en su registro" {
-		assert.equals(0, planVacunacion.costoInicialVacunacion(personaAnticuerposa))
+	test "Una persona no acepta la vacuna y no la pone en su registro" {
+		planVacunacion.agregarPersonas([ personaAnticuerposa ])
+		assert.equals(0, planVacunacion.costoInicialVacunacion())
 	}
 
 }
